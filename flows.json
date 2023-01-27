@@ -1,0 +1,252 @@
+[
+    {
+        "id": "27e8fae1bdc33971",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "5b400aa46431c4a3",
+        "type": "mqtt in",
+        "z": "27e8fae1bdc33971",
+        "name": "",
+        "topic": "ejmm/temperature",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "c3bbeab2268bc172",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 220,
+        "wires": [
+            [
+                "8fa8d417eabaf9f5"
+            ]
+        ]
+    },
+    {
+        "id": "a2d319dbf03b013f",
+        "type": "mqtt in",
+        "z": "27e8fae1bdc33971",
+        "name": "",
+        "topic": "ejmm/humidity",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "c3bbeab2268bc172",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 130,
+        "y": 340,
+        "wires": [
+            [
+                "183b0d40b2a5d606"
+            ]
+        ]
+    },
+    {
+        "id": "7078ac7650525683",
+        "type": "ui_gauge",
+        "z": "27e8fae1bdc33971",
+        "name": "",
+        "group": "a1fe3c8c3b162c3a",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Humidity",
+        "label": "%",
+        "format": "{{msg.payload.humidity}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 680,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "c4b07d322271a33c",
+        "type": "ui_gauge",
+        "z": "27e8fae1bdc33971",
+        "name": "",
+        "group": "a1fe3c8c3b162c3a",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Temperature",
+        "label": "°C",
+        "format": "{{msg.payload.temperature}}",
+        "min": 0,
+        "max": "40",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 690,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "8fa8d417eabaf9f5",
+        "type": "json",
+        "z": "27e8fae1bdc33971",
+        "name": "Parse temperature",
+        "property": "payload.temperature",
+        "action": "",
+        "pretty": false,
+        "x": 390,
+        "y": 220,
+        "wires": [
+            [
+                "c4b07d322271a33c",
+                "c57fb64442e7432d"
+            ]
+        ]
+    },
+    {
+        "id": "183b0d40b2a5d606",
+        "type": "json",
+        "z": "27e8fae1bdc33971",
+        "name": "Parse humidity",
+        "property": "payload.humidity",
+        "action": "str",
+        "pretty": false,
+        "x": 380,
+        "y": 340,
+        "wires": [
+            [
+                "7078ac7650525683",
+                "c57fb64442e7432d"
+            ]
+        ]
+    },
+    {
+        "id": "c57fb64442e7432d",
+        "type": "function",
+        "z": "27e8fae1bdc33971",
+        "name": "Convert to SPB",
+        "func": "const valuet = parseFloat(msg.payload.temperature);\nconst valueh = msg.payload.humidity;\nmsg.payload = {\n    \"metrics\": [{\n        \"name\": \"Temperature\",\n        \"alias\": 1,\n        \"datatype\": 9,\n        \"isNull\": false,\n        \"floatValue\": valuet\n    },\n    {\n        \"name\": \"Humidity\",\n        \"alias\": 2,\n        \"datatype\": 9,\n        \"isNull\": false,\n        \"floatValue\": valueh\n    }\n    ],\n    \"seq\": -1\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 760,
+        "y": 280,
+        "wires": [
+            [
+                "6468fa5801fe1124"
+            ]
+        ]
+    },
+    {
+        "id": "6468fa5801fe1124",
+        "type": "mqtt out",
+        "z": "27e8fae1bdc33971",
+        "name": "",
+        "topic": "spBv1.0/ESIEA/DDATA/raspberry/device_grp9",
+        "qos": "2",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "72587cfaf7feb66e",
+        "x": 1100,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "c3bbeab2268bc172",
+        "type": "mqtt-broker",
+        "name": "network_machine",
+        "broker": "10.8.128.250",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "a1fe3c8c3b162c3a",
+        "type": "ui_group",
+        "name": "Température en salle V-14",
+        "tab": "81546dbbde1d3459",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "72587cfaf7feb66e",
+        "type": "mqtt-broker",
+        "name": "scada",
+        "broker": "10.8.128.239",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "81546dbbde1d3459",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
